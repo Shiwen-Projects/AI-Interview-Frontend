@@ -18,19 +18,29 @@ import {
   IconSparkles,
   IconUpload,
 } from "../../components/icons";
-import type { InterviewQuestion } from "./types";
+import type { InterviewSession } from "./types";
 
-export function InterviewPreparation() {
+type InterviewPreparationProps = {
+  initialSession?: InterviewSession;
+};
+
+export function InterviewPreparation(props: InterviewPreparationProps) {
+  const { initialSession } = props;
+  const {
+    questions = [],
+    // cvId = "", // TODO: think of using id or just file object
+    post = "",
+    jobDescription = "",
+  } = initialSession ?? {};
   const [isGenerating, setIsGenerating] = useState(false);
-  const [questions, setQuestions] = useState<InterviewQuestion[]>([]);
   const splitterRef = useRef<UseSplitterReturnValue | null>(null);
   const [isLeftCollapsed, setIsLeftCollapsed] = useState(false);
 
   const form = useForm({
     initialValues: {
-      cv: null as File | null,
-      position: "",
-      jobDescription: "",
+      cv: null, // TODO: think of using id or just file object
+      position: post,
+      jobDescription: jobDescription,
     },
     validate: {
       cv: (value) => (value ? null : INTERVIEW_PREPARATION.CV_VALIDATION),
@@ -87,9 +97,8 @@ export function InterviewPreparation() {
           collapseThreshold={0}
         >
           <form
-            onSubmit={form.onSubmit((values) => {
+            onSubmit={form.onSubmit(() => {
               setIsGenerating(true);
-              setQuestions([]);
               // TODO: generate questions
             })}
             className="flex h-full flex-col gap-4 p-6"
