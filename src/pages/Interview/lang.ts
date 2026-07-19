@@ -4,7 +4,7 @@ export const INTERVIEW_PREPARATION = {
   PANEL_SUBTITLE: "Fill in the details below to generate tailored interview questions.",
 
   CV: "CV / Resume",
-  CV_PLACEHOLDER: "Upload your CV (PDF, DOC, DOCX)",
+  CV_PLACEHOLDER: "Upload your CV (PDF)",
   CV_VALIDATION: "CV is required",
   POSITION: "Job Post",
   POSITION_PLACEHOLDER: "Paste the job title or the full job posting...",
@@ -22,4 +22,5 @@ export const INTERVIEW_PREPARATION = {
   RESULT_COUNT: (count: number) => `${count} question${count === 1 ? "" : "s"} generated`,
   EMPTY_TITLE: "No questions yet",
   EMPTY_DESCRIPTION: "Fill in the form on the left and generate to see tailored interview questions here.",
+  LOADING_SESSION: "Loading your interview session...",
 };
