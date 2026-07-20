@@ -18,7 +18,9 @@ import {
   IconSparkles,
   IconUpload,
 } from "../../components/icons";
-import type { InterviewSession } from "./types";
+import type { InterviewQuestion, InterviewSession } from "./types";
+import { createInterviewSession, getStreamingQuestions } from "../../api";
+import type { QuestionStreamHandler } from "../../api/interview/types";
 
 type InterviewPreparationProps = {
   initialSession?: InterviewSession;
@@ -27,12 +29,14 @@ type InterviewPreparationProps = {
 export function InterviewPreparation(props: InterviewPreparationProps) {
   const { initialSession } = props;
   const {
-    questions = [],
+    questions: initialQuestions = [],
     // cvId = "", // TODO: think of using id or just file object
     post = "",
     jobDescription = "",
   } = initialSession ?? {};
   const [isGenerating, setIsGenerating] = useState(false);
+  const [errorText, setErrorText] = useState<string | null>(null);
+  const [questions, setQuestions] = useState<InterviewQuestion[]>(initialQuestions);
   const splitterRef = useRef<UseSplitterReturnValue | null>(null);
   const [isLeftCollapsed, setIsLeftCollapsed] = useState(false);
 
@@ -50,6 +54,39 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
         value ? null : INTERVIEW_PREPARATION.JOB_DESCRIPTION_VALIDATION,
     },
   });
+
+  const createSessionAndGenerateQuestions = async (
+    cv: File,
+    post: string,
+    jobDescription: string,
+  ) => {
+    try {
+      setIsGenerating(true);
+      const sessionId = await createInterviewSession(cv, post, jobDescription);
+
+      if(sessionId) {
+        // set the url with sessionId to the browser history but not reload the page
+        window.history.pushState({}, "", `/${sessionId}`);
+
+        const handler: QuestionStreamHandler = {
+          onQuestion: (question) => {
+            setQuestions((prev) => [...prev, question]);
+          },
+          onDone: () => {
+            setIsGenerating(false);
+          },
+          onError: (error) => {
+            setIsGenerating(false);
+            setErrorText(error instanceof Error ? error.message : "Unknown error");
+          },
+        }
+        await getStreamingQuestions(sessionId, handler);
+      }
+    } catch (error) {
+      setIsGenerating(false);
+      setErrorText(error instanceof Error ? error.message : "Unknown error");
+    }
+  };
 
   return (
     <div
@@ -97,9 +134,12 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
           collapseThreshold={0}
         >
           <form
-            onSubmit={form.onSubmit(() => {
-              setIsGenerating(true);
-              // TODO: generate questions
+            onSubmit={form.onSubmit(async (values) => {
+              await createSessionAndGenerateQuestions(
+                values.cv as unknown as File,
+                values.position,
+                values.jobDescription,
+              );
             })}
             className="flex h-full flex-col gap-4 p-6"
             style={{ background: "var(--bg)" }}
@@ -187,6 +227,11 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
                     interviewQuestion={question}
                   />
                 ))}
+                {errorText && (
+                  <div className="flex flex-col gap-2">
+                    <Text size="sm" c="red">{errorText}</Text>
+                  </div>
+                )}
               </div>
             )}
           </div>

@@ -1,5 +1,5 @@
 import type { LoaderFunctionArgs } from "react-router-dom";
-import { getInterviewSession } from "../../api/interview";
+import { getInterviewSession } from "../../api/interview/interview";
 
 export async function interviewSessionLoader({
   params,
