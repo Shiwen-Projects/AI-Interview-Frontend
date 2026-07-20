@@ -23,14 +23,19 @@ An AI-powered interview preparation tool that generates targeted questions based
 
 ### Create a new Interview Session
 
-Access Route: 
-
+- Access Route: `/`
+- Fill in cv, post and job description -> Click Generate
+- Send Post request by `createInterviewSession`
+- If response successfully
+    - Obtain `sessionId` and add it to url
+    - Open SSE connection, get the return data.
+    - Detect any new question is ready, display it out; detect if the SSE is done. 
 
 
 ### Access an existed Interview Session
 
 - Access Route: `/:sessionId`
-- Using `interviewSessionLoader` and Query ``
+- Using `interviewSessionLoader` and Query by `getInterviewSession`
 - If response successfully
     - Render `InterviewPreparationPage`
     - Pass the query data into InterviewPreparation
