@@ -19,6 +19,8 @@ export const INTERVIEW_PREPARATION = {
   SHOW_PANEL: "Show input panel",
 
   RESULT_TITLE: "Interview Questions",
+  GENERATING_QUESTIONS: "Generating questions...",
+  
   RESULT_COUNT: (count: number) => `${count} question${count === 1 ? "" : "s"} generated`,
   EMPTY_TITLE: "No questions yet",
   EMPTY_DESCRIPTION: "Fill in the form on the left and generate to see tailored interview questions here.",

@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useForm } from "@mantine/form";
+import { notifications } from "@mantine/notifications";
 import {
   ActionIcon,
   Button,
@@ -8,19 +9,23 @@ import {
   Text,
   Textarea,
   Tooltip,
+  Loader,
 } from "@mantine/core";
 import type { UseSplitterReturnValue } from "@mantine/hooks";
+import {
+  MessageCircleQuestion,
+  PanelLeft,
+  Sparkles,
+  Upload,
+} from "lucide-react";
 import { INTERVIEW_PREPARATION } from "./lang";
 import { QuestionCard } from "./QuestionCard";
-import {
-  IconMessageQuestion,
-  IconSidebar,
-  IconSparkles,
-  IconUpload,
-} from "../../components/icons";
 import type { InterviewQuestion, InterviewSession } from "./types";
-import { createInterviewSession, getStreamingQuestions } from "../../api";
-import type { QuestionStreamHandler } from "../../api/interview/types";
+import {
+  createInterviewSession,
+  getStreamingQuestions,
+  type QuestionStreamHandler,
+} from "../../api/interview";
 
 type InterviewPreparationProps = {
   initialSession?: InterviewSession;
@@ -35,8 +40,8 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
     jobDescription = "",
   } = initialSession ?? {};
   const [isGenerating, setIsGenerating] = useState(false);
-  const [errorText, setErrorText] = useState<string | null>(null);
-  const [questions, setQuestions] = useState<InterviewQuestion[]>(initialQuestions);
+  const [questions, setQuestions] =
+    useState<InterviewQuestion[]>(initialQuestions);
   const splitterRef = useRef<UseSplitterReturnValue | null>(null);
   const [isLeftCollapsed, setIsLeftCollapsed] = useState(false);
 
@@ -64,7 +69,7 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
       setIsGenerating(true);
       const sessionId = await createInterviewSession(cv, post, jobDescription);
 
-      if(sessionId) {
+      if (sessionId) {
         // set the url with sessionId to the browser history but not reload the page
         window.history.pushState({}, "", `/${sessionId}`);
 
@@ -74,19 +79,41 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
           },
           onDone: () => {
             setIsGenerating(false);
+            notifications.show({
+              color: "green",
+              title: "Success",
+              message: "All questions generated successfully. ",
+            });
           },
           onError: (error) => {
             setIsGenerating(false);
-            setErrorText(error instanceof Error ? error.message : "Unknown error");
+            console.error(error);
+            notifications.show({
+              color: "red",
+              title: "Error",
+              message: error.message,
+            });
           },
-        }
+        };
         await getStreamingQuestions(sessionId, handler);
       }
     } catch (error) {
       setIsGenerating(false);
-      setErrorText(error instanceof Error ? error.message : "Unknown error");
+      console.error(error);
+      notifications.show({
+        color: "red",
+        title: "Error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Unable to generate interview questions.",
+      });
     }
   };
+
+  // used to: disable the generate button and show the loading spinner and the questions
+  const displayGeneratingQuestions = isGenerating || questions.length > 0;
+  const showGenerateButton = questions.length === 0;
 
   return (
     <div
@@ -113,7 +140,7 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
             aria-label="Toggle input panel"
             onClick={() => splitterRef.current?.toggleCollapse(0)}
           >
-            <IconSidebar width={18} height={18} />
+            <PanelLeft size={18} />
           </ActionIcon>
         </Tooltip>
       </header>
@@ -141,7 +168,7 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
                 values.jobDescription,
               );
             })}
-            className="flex h-full flex-col gap-4 p-6"
+            className="flex h-full min-h-0 flex-col gap-4 overflow-y-auto p-6"
             style={{ background: "var(--bg)" }}
           >
             <div>
@@ -158,10 +185,9 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
               placeholder={INTERVIEW_PREPARATION.CV_PLACEHOLDER}
               accept=".pdf"
               key={form.key("cv")}
-              rightSection={
-                <IconUpload width={16} height={16} color="var(--text)" />
-              }
+              rightSection={<Upload size={16} color="var(--text)" />}
               {...form.getInputProps("cv")}
+              disabled={isGenerating}
             />
             <Textarea
               label={INTERVIEW_PREPARATION.POSITION}
@@ -170,6 +196,7 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
               autosize
               key={form.key("position")}
               {...form.getInputProps("position")}
+              disabled={isGenerating}
             />
             <Textarea
               label={INTERVIEW_PREPARATION.JOB_DESCRIPTION}
@@ -179,29 +206,52 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
               className="flex-1"
               key={form.key("jobDescription")}
               {...form.getInputProps("jobDescription")}
+              disabled={isGenerating}
             />
 
-            <div className="mt-auto flex justify-end">
-              <Button
-                type="submit"
-                loading={isGenerating}
-                leftSection={<IconSparkles width={16} height={16} />}
-              >
-                {INTERVIEW_PREPARATION.GENERATE}
-              </Button>
-            </div>
+            {showGenerateButton && (
+              <div className="mt-auto flex justify-end">
+                <Button
+                  type="submit"
+                  loading={displayGeneratingQuestions}
+                  leftSection={<Sparkles size={16} />}
+                >
+                  {INTERVIEW_PREPARATION.GENERATE}
+                </Button>
+              </div>
+            )}
           </form>
         </Splitter.Pane>
 
         <Splitter.Pane defaultSize={64} min={60}>
-          <div className="flex h-full flex-col gap-4 p-6">
+          <div className="flex h-full flex-1 flex-col gap-4 overflow-y-auto p-6">
             <div>
               <Text fw={600} size="sm" c="var(--text-h)">
                 {INTERVIEW_PREPARATION.RESULT_TITLE}
               </Text>
             </div>
 
-            {questions.length === 0 ? (
+            {displayGeneratingQuestions ? (
+              <>
+                {isGenerating && (
+                  <div className="flex flex-row align-center gap-2 w-full justify-center">
+                    <Loader color="blue" size="sm" />
+                    <Text size="sm" c="dimmed">
+                      {INTERVIEW_PREPARATION.GENERATING_QUESTIONS}
+                    </Text>
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-4">
+                  {questions.map((question) => (
+                    <QuestionCard
+                      key={question.id}
+                      interviewQuestion={question}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
               <div className="flex flex-1 flex-col items-center justify-center gap-3 text-center">
                 <div
                   className="flex h-12 w-12 items-center justify-center rounded-full"
@@ -210,7 +260,7 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
                     color: "var(--accent)",
                   }}
                 >
-                  <IconMessageQuestion width={22} height={22} />
+                  <MessageCircleQuestion size={22} />
                 </div>
                 <Text fw={500} size="sm" c="var(--text-h)">
                   {INTERVIEW_PREPARATION.EMPTY_TITLE}
@@ -218,20 +268,6 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
                 <Text size="sm" c="dimmed" maw={340}>
                   {INTERVIEW_PREPARATION.EMPTY_DESCRIPTION}
                 </Text>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-4">
-                {questions.map((question) => (
-                  <QuestionCard
-                    key={question.id}
-                    interviewQuestion={question}
-                  />
-                ))}
-                {errorText && (
-                  <div className="flex flex-col gap-2">
-                    <Text size="sm" c="red">{errorText}</Text>
-                  </div>
-                )}
               </div>
             )}
           </div>
