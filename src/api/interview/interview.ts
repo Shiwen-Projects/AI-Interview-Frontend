@@ -1,3 +1,4 @@
+
 import { InterviewQuestionStreamEvent } from "../../pages/Interview/constants";
 import type {
   InterviewSession,
@@ -75,6 +76,6 @@ export const getStreamingQuestions = async (
   });
 
   eventSource.addEventListener(InterviewQuestionStreamEvent.Error, (event) => {
-    handler.onError(new Error(event.data));
+    handler.onError(new Error(JSON.parse(event.data).message));
   });
 };

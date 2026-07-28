@@ -1,6 +1,6 @@
 import { Text } from '@mantine/core'
+import { MessageCircleQuestion } from 'lucide-react'
 import type { InterviewQuestion } from './types'
-import { IconMessageQuestion } from '../../components/icons'
 
 interface QuestionCardProps {
   interviewQuestion: InterviewQuestion
@@ -20,7 +20,7 @@ export function QuestionCard(props: QuestionCardProps) {
         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
         style={{ background: 'var(--accent-bg)', color: 'var(--accent)' }}
       >
-        <IconMessageQuestion width={16} height={16} />
+        <MessageCircleQuestion size={16} />
       </div>
       <Text size="sm" c="var(--text-h)" style={{ lineHeight: 1.5 }}>
         {question}
