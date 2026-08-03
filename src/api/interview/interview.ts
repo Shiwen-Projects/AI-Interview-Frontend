@@ -7,6 +7,9 @@ import type { QuestionStreamHandler } from "./types";
 
 const VITE_API_URL = import.meta.env.VITE_API_URL;
 
+export const getCvFileUrl = (cvId: string): string =>
+  `${VITE_API_URL}/api/storage/files/${encodeURIComponent(cvId)}`;
+
 export const getInterviewSession = async (
   sessionId: string,
   signal?: AbortSignal, // for cancelling the request
@@ -24,7 +27,10 @@ export const getInterviewSession = async (
     id: data.id,
     post: data.post,
     jobDescription: data.jobDescription,
-    cvId: data.cvId,
+    cv: {
+      id: data.cv?.id ?? "",
+      name: data.cv?.name ?? "",
+    },
     questions: data.questions.map((question: any) => ({
       id: question.id,
       question: question.question,
