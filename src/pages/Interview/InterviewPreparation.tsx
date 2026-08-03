@@ -3,6 +3,7 @@ import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import {
   ActionIcon,
+  Anchor,
   Button,
   FileInput,
   Splitter,
@@ -13,6 +14,7 @@ import {
 } from "@mantine/core";
 import type { UseSplitterReturnValue } from "@mantine/hooks";
 import {
+  ExternalLink,
   MessageCircleQuestion,
   PanelLeft,
   Sparkles,
@@ -23,6 +25,7 @@ import { QuestionCard } from "./QuestionCard";
 import type { InterviewQuestion, InterviewSession } from "./types";
 import {
   createInterviewSession,
+  getCvFileUrl,
   getStreamingQuestions,
   type QuestionStreamHandler,
 } from "../../api/interview";
@@ -34,8 +37,9 @@ type InterviewPreparationProps = {
 export function InterviewPreparation(props: InterviewPreparationProps) {
   const { initialSession } = props;
   const {
+    id: sessionId,
     questions: initialQuestions = [],
-    // cvId = "", // TODO: think of using id or just file object
+    cv: initialCv,
     post = "",
     jobDescription = "",
   } = initialSession ?? {};
@@ -47,7 +51,7 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
 
   const form = useForm({
     initialValues: {
-      cv: null, // TODO: think of using id or just file object
+      cv: null, // In create mode, defult empty file
       position: post,
       jobDescription: jobDescription,
     },
@@ -111,9 +115,11 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
     }
   };
 
-  // used to: disable the generate button and show the loading spinner and the questions
-  const displayGeneratingQuestions = isGenerating || questions.length > 0;
+  // used to: disable the generate button, input fields and show the loading spinner and the questions
+  const hasQuestionGenerationStarted = isGenerating || questions.length > 0;
+  
   const showGenerateButton = questions.length === 0;
+  const isCreateMode = !sessionId;
 
   return (
     <div
@@ -180,23 +186,58 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
               </Text>
             </div>
 
-            <FileInput
-              label={INTERVIEW_PREPARATION.CV}
-              placeholder={INTERVIEW_PREPARATION.CV_PLACEHOLDER}
-              accept=".pdf"
-              key={form.key("cv")}
-              rightSection={<Upload size={16} color="var(--text)" />}
-              {...form.getInputProps("cv")}
-              disabled={isGenerating}
-            />
+            {isCreateMode ? (
+              <FileInput
+                label={INTERVIEW_PREPARATION.CV}
+                placeholder={INTERVIEW_PREPARATION.CV_PLACEHOLDER}
+                accept=".pdf"
+                key={form.key("cv")}
+                rightSection={<Upload size={16} color="var(--text)" />}
+                disabled={hasQuestionGenerationStarted}
+                clearable={!hasQuestionGenerationStarted}
+                withAsterisk
+                {...form.getInputProps("cv")}
+              />
+            ) : initialCv ? (
+              <div>
+                <Text component="label" size="sm" fw={600} c="var(--text-h)">
+                  {INTERVIEW_PREPARATION.CV}
+                </Text>
+                <Anchor
+                  href={getCvFileUrl(initialCv.id)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Open ${initialCv.name} in a new tab`}
+                  title={initialCv.name}
+                  underline="always"
+                  style = {{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <Text size="sm" truncate>
+                    {initialCv.name}
+                  </Text>
+                  <ExternalLink
+                    size={16}
+                    className="shrink-0"
+                    color="var(--text)"
+                  />
+                </Anchor>
+              </div>
+            ) : null}
+
             <Textarea
               label={INTERVIEW_PREPARATION.POSITION}
               placeholder={INTERVIEW_PREPARATION.POSITION_PLACEHOLDER}
               minRows={3}
               autosize
               key={form.key("position")}
+              disabled={hasQuestionGenerationStarted}
+              withAsterisk
               {...form.getInputProps("position")}
-              disabled={isGenerating}
             />
             <Textarea
               label={INTERVIEW_PREPARATION.JOB_DESCRIPTION}
@@ -205,15 +246,16 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
               autosize
               className="flex-1"
               key={form.key("jobDescription")}
+              withAsterisk
+              disabled={hasQuestionGenerationStarted}
               {...form.getInputProps("jobDescription")}
-              disabled={isGenerating}
             />
 
             {showGenerateButton && (
               <div className="mt-auto flex justify-end">
                 <Button
                   type="submit"
-                  loading={displayGeneratingQuestions}
+                  loading={hasQuestionGenerationStarted}
                   leftSection={<Sparkles size={16} />}
                 >
                   {INTERVIEW_PREPARATION.GENERATE}
@@ -231,7 +273,7 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
               </Text>
             </div>
 
-            {displayGeneratingQuestions ? (
+            {hasQuestionGenerationStarted ? (
               <>
                 {isGenerating && (
                   <div className="flex flex-row align-center gap-2 w-full justify-center">

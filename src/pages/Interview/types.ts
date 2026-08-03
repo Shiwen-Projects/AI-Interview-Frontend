@@ -15,6 +15,11 @@ export type InterviewSession = {
   id: string;
   post: string;
   jobDescription: string;
-  cvId: string;
+  cv: FileType;
   questions: InterviewQuestion[];
 };
+
+export type FileType = {
+  id: string;
+  name: string;
+}
