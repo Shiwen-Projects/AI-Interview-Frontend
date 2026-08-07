@@ -31,8 +31,8 @@ the frontend displays each question it receives.
 
 ### 🔜 Planned
 
-- Expand a question and write an answer.
-- Submit an answer for AI scoring and feedback.
+- Open a question card in a dialog to write an answer.
+- Save and submit an answer for AI scoring and feedback.
 - Export a session as PDF or Markdown.
 
 ### 🔮 Future idea
@@ -41,13 +41,15 @@ the frontend displays each question it receives.
 
 ## 🖼️ Low-fidelity UI
 
+### Interview Preparation Page
+
 ```text
 ┌──────────────────────────────┬─────────────────────────────────────────┐
 │       CANDIDATE DETAILS      │          INTERVIEW QUESTIONS            │
 │──────────────────────────────│─────────────────────────────────────────│
-│ 📄 CV / Resume (PDF)         │ 📋 Questions appear as they are ready   │
+│ 📄 CV / Resume (PDF)         │ 📋 Question cards appear as ready       │
 │ 🎯 Target position          │                                         │
-│ 📝 Job description          │ 🔜 Expand → answer → receive feedback   │
+│ 📝 Job description          │ 🔜 Click a card → open answer dialog    │
 │                              │                                         │
 │                 [✨ Generate] │ 🔜 Export as PDF or Markdown            │
 └──────────────────────────────┴─────────────────────────────────────────┘
@@ -55,8 +57,7 @@ the frontend displays each question it receives.
 
 The left panel is collapsible. The right panel shows an empty state before
 generation, a loading indicator during generation, and question cards as SSE
-events arrive.
-
+events arrive. Clicking a question card opens the Answer Evaluation Dialog.
 
 ## 👤 Primary user journey
 
@@ -102,6 +103,62 @@ Visit /:sessionId
   → GET /api/sessions/:sessionId
   → InterviewPreparationPage
   → InterviewPreparation(initialSession)
+```
+
+### Update & Evaluate Answer
+
+#### Before evaluation
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│  Answer Question                                       [✕]  │
+│─────────────────────────────────────────────────────────────│
+│                                                             │
+│  Q. How do you optimize a React application?                │
+│                                                             │
+│  Your answer                                                │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │                                                       │  │
+│  │  (editable textarea)                                  │  │
+│  │                                                       │  │
+│  │                                                       │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                                                             │
+│                              [ Save & Evaluate ]            │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+- Question text is read-only at the top.
+- Answer textarea is editable.
+- **Save & Evaluate** is visible only when there is no evaluation yet.
+- Submitting shows a loading state on the button while the AI scores the answer.
+
+#### After evaluation
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│  Answer Question                                       [✕]  │
+│─────────────────────────────────────────────────────────────│
+│                                                             │
+│  Q. How do you optimize a React application?                │
+│                                                             │
+│  Your answer                                                │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │  I would use React.memo, code splitting, and...       │  │
+│  │  (read-only)                                          │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                                                             │
+│  Evaluation                                                 │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │  Score: 80 / 100                                        │  │
+│  │                                                       │  │
+│  │  Strong coverage of memoization and lazy loading.     │  │
+│  │  Consider mentioning profiling tools (React DevTools) │  │
+│  │  and measuring before optimizing.                     │  │
+│  └───────────────────────────────────────────────────────┘  │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ## 🔌 API contract

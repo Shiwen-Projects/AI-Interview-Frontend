@@ -25,4 +25,13 @@ export const INTERVIEW_PREPARATION = {
   EMPTY_TITLE: "No questions yet",
   EMPTY_DESCRIPTION: "Fill in the form on the left and generate to see tailored interview questions here.",
   LOADING_SESSION: "Loading your interview session...",
+
+  ANSWER_QUESTION: "Answer question",
+  ANSWER_MODAL_TITLE: "Answer Question",
+  ANSWER_LABEL: "Your answer",
+  ANSWER_PLACEHOLDER: "Write your answer here...",
+  SAVE: "Save",
+  EVALUATE: "Evaluate",
+  EVALUATING_ANSWER: "Evaluating answer...",
+  EVALUATION_FEEDBACK: "Evaluation Feedback",
 };
