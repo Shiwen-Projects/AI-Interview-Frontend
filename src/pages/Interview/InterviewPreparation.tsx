@@ -22,13 +22,13 @@ import {
 } from "lucide-react";
 import { INTERVIEW_PREPARATION } from "./lang";
 import { QuestionCard } from "./QuestionCard";
-import type { InterviewQuestion, InterviewSession } from "./types";
 import {
   createInterviewSession,
   getCvFileUrl,
   getStreamingQuestions,
   type QuestionStreamHandler,
 } from "../../api/interview";
+import type { InterviewQuestion, InterviewSession } from "../../api/interview/types";
 
 type InterviewPreparationProps = {
   initialSession?: InterviewSession;
@@ -37,7 +37,7 @@ type InterviewPreparationProps = {
 export function InterviewPreparation(props: InterviewPreparationProps) {
   const { initialSession } = props;
   const {
-    id: sessionId,
+    id: sessionId = "",
     questions: initialQuestions = [],
     cv: initialCv,
     post = "",
@@ -285,9 +285,11 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
                 )}
 
                 <div className="flex flex-col gap-4">
-                  {questions.map((question) => (
+                  {questions.map((question, index) => (
                     <QuestionCard
                       key={question.id}
+                      index={index}
+                      sessionId={sessionId}
                       interviewQuestion={question}
                     />
                   ))}

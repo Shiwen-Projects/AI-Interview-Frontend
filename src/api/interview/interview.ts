@@ -1,9 +1,7 @@
 
 import { InterviewQuestionStreamEvent } from "../../pages/Interview/constants";
-import type {
-  InterviewSession,
-} from "../../pages/Interview/types";
-import type { QuestionStreamHandler } from "./types";
+import { getResponseErrorMessage } from "../../utils/errors";
+import type { AnswerEvaluation, InterviewSession, QuestionStreamHandler } from "./types";
 
 const VITE_API_URL = import.meta.env.VITE_API_URL;
 
@@ -33,10 +31,15 @@ export const getInterviewSession = async (
     },
     questions: data.questions.map((question: any) => ({
       id: question.id,
-      question: question.question,
+      question: question?.question,
+      answer: {
+        answer: question?.answer?.answer ?? '',
+        score: question?.answer?.score ?? null,
+        feedback: question?.answer?.feedback ?? '',
+      },
     })),
   };
-};
+  };
 
 export const createInterviewSession = async (
   cv: File,
@@ -84,4 +87,62 @@ export const getStreamingQuestions = async (
   eventSource.addEventListener(InterviewQuestionStreamEvent.Error, (event) => {
     handler.onError(new Error(JSON.parse(event.data).message));
   });
+};
+
+export const updateQuestionAnswer = async (
+  sessionId: string,
+  questionId: string,
+  answer: string,
+  signal?: AbortSignal,
+): Promise<void> => {
+  const response = await fetch(
+    `${VITE_API_URL}/api/sessions/${sessionId}/questions/${questionId}/answer`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ answer }),
+      signal,
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      await getResponseErrorMessage(
+        response,
+        `Failed to update question answer (${response.status})`,
+      ),
+    );
+  }
+};
+
+export const evaluateQuestionAnswer = async (
+  sessionId: string,
+  questionId: string,
+  answer: string,
+  signal?: AbortSignal,
+): Promise<AnswerEvaluation> => {
+  const response = await fetch(
+    `${VITE_API_URL}/api/sessions/${sessionId}/questions/${questionId}/evaluate`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ answer }),
+      signal,
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      await getResponseErrorMessage(
+        response,
+        `Failed to evaluate answer (${response.status})`,
+      ),
+    );
+  }
+
+  const data = await response.json();
+  return {
+    score: data.score ?? 0,
+    feedback: data.feedback ?? "",
+  };
 };
