@@ -2,7 +2,7 @@ import { ActionIcon, Text, Tooltip } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { PenLine } from "lucide-react";
 import { AnswerEvaluationModal } from "./AnswerEvaluationModal";
-import { INTERVIEW_PREPARATION } from "./lang";
+import { INTERVIEW_PREPARATION_TEXT } from "./lang";
 import type { InterviewQuestion } from "../../api/interview/types";
 
 interface QuestionCardProps {
@@ -38,7 +38,7 @@ export function QuestionCard(props: QuestionCardProps) {
           {question}
         </Text>
         <Tooltip
-          label={INTERVIEW_PREPARATION.ANSWER_QUESTION}
+          label={INTERVIEW_PREPARATION_TEXT.ANSWER_QUESTION}
           fz={11}
           position="bottom"
         >
@@ -46,7 +46,7 @@ export function QuestionCard(props: QuestionCardProps) {
             variant="subtle"
             color="gray"
             size="sm"
-            aria-label={INTERVIEW_PREPARATION.ANSWER_QUESTION}
+            aria-label={INTERVIEW_PREPARATION_TEXT.ANSWER_QUESTION}
             onClick={open}
           >
             <PenLine size={16} />
