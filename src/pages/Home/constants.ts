@@ -1,0 +1,2 @@
+export const HOME_PAGE_DEFAULT_PAGE = 1;
+export const HOME_PAGE_DEFAULT_LIMIT = 10;

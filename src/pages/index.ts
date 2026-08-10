@@ -1,6 +1,6 @@
 export {
   InterviewPreparation,
   InterviewPreparationPage,
-  InterviewSessionError,
   interviewSessionLoader,
-} from './Interview'
+} from "./Interview";
+export { HomePage, homePageLoader } from "./Home";

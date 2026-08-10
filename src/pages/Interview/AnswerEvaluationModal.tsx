@@ -9,7 +9,7 @@ import {
 import { notifications } from "@mantine/notifications";
 import { useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
-import { INTERVIEW_PREPARATION } from "./lang";
+import { INTERVIEW_PREPARATION_TEXT } from "./lang";
 import type { InterviewQuestion } from "../../api/interview/types";
 import { evaluateQuestionAnswer, updateQuestionAnswer } from "../../api";
 import { isAbortError } from "../../utils";
@@ -120,7 +120,7 @@ export function AnswerEvaluationModal(props: AnswerEvaluationModalProps) {
     <Modal
       opened={opened}
       onClose={handleClose}
-      title={INTERVIEW_PREPARATION.ANSWER_MODAL_TITLE}
+      title={INTERVIEW_PREPARATION_TEXT.ANSWER_MODAL_TITLE}
       size="lg"
       centered
     >
@@ -130,8 +130,8 @@ export function AnswerEvaluationModal(props: AnswerEvaluationModalProps) {
         </Text>
 
         <Textarea
-          label={INTERVIEW_PREPARATION.ANSWER_LABEL}
-          placeholder={INTERVIEW_PREPARATION.ANSWER_PLACEHOLDER}
+          label={INTERVIEW_PREPARATION_TEXT.ANSWER_LABEL}
+          placeholder={INTERVIEW_PREPARATION_TEXT.ANSWER_PLACEHOLDER}
           minRows={6}
           autosize
           value={answerText}
@@ -145,14 +145,14 @@ export function AnswerEvaluationModal(props: AnswerEvaluationModalProps) {
             size="sm"
             onClick={handleUpdateAnswer}
           >
-            {INTERVIEW_PREPARATION.SAVE}
+            {INTERVIEW_PREPARATION_TEXT.SAVE}
           </Button>
           <Button
             disabled={disableButtons}
             size="sm"
             onClick={handleEvaluateAnswer}
           >
-            {INTERVIEW_PREPARATION.EVALUATE}
+            {INTERVIEW_PREPARATION_TEXT.EVALUATE}
           </Button>
         </div>
 
@@ -160,7 +160,7 @@ export function AnswerEvaluationModal(props: AnswerEvaluationModalProps) {
           <div className="flex flex-row align-center gap-2 w-full justify-center my-6">
             <Loader color="blue" size="sm" />
             <Text size="sm" c="dimmed">
-              {INTERVIEW_PREPARATION.EVALUATING_ANSWER}
+              {INTERVIEW_PREPARATION_TEXT.EVALUATING_ANSWER}
             </Text>
           </div>
         ) : (
@@ -175,7 +175,7 @@ export function AnswerEvaluationModal(props: AnswerEvaluationModalProps) {
               <div className="flex items-center gap-2">
                 <Sparkles size={16} style={{ color: "var(--accent)" }} />
                 <Text size="sm" fw={600} c="var(--text-h)">
-                  {INTERVIEW_PREPARATION.EVALUATION_FEEDBACK}
+                  {INTERVIEW_PREPARATION_TEXT.EVALUATION_FEEDBACK}
                 </Text>
               </div>
 

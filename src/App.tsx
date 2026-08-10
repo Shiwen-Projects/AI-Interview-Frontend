@@ -1,22 +1,32 @@
 import './App.css'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import {
+  HomePage,
+  homePageLoader,
   InterviewPreparation,
   InterviewPreparationPage,
-  InterviewSessionError,
   interviewSessionLoader,
 } from './pages'
+import { GlobalLoader, PageLoadingError } from './components'
 
 const router = createBrowserRouter([
   {
     path: '/',
+    loader: homePageLoader,
+    element: <HomePage />,
+    errorElement: <PageLoadingError title="Unable to load home page" />,
+    hydrateFallbackElement: <GlobalLoader visible />,
+  },
+  {
+    path: 'session/',
     element: <InterviewPreparation />,
   },
   {
-    path: '/:sessionId',
+    path: 'session/:sessionId',
     loader: interviewSessionLoader,
     element: <InterviewPreparationPage />,
-    errorElement: <InterviewSessionError />,
+    errorElement: <PageLoadingError title="Unable to load interview session" />,
+    hydrateFallbackElement: <GlobalLoader visible />,
   },
 ])
 

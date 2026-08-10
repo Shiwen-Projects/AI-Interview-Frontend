@@ -20,7 +20,7 @@ import {
   Sparkles,
   Upload,
 } from "lucide-react";
-import { INTERVIEW_PREPARATION } from "./lang";
+import { INTERVIEW_PREPARATION_TEXT } from "./lang";
 import { QuestionCard } from "./QuestionCard";
 import {
   createInterviewSession,
@@ -56,11 +56,11 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
       jobDescription: jobDescription,
     },
     validate: {
-      cv: (value) => (value ? null : INTERVIEW_PREPARATION.CV_VALIDATION),
+      cv: (value) => (value ? null : INTERVIEW_PREPARATION_TEXT.CV_VALIDATION),
       position: (value) =>
-        value ? null : INTERVIEW_PREPARATION.POSITION_VALIDATION,
+        value ? null : INTERVIEW_PREPARATION_TEXT.POSITION_VALIDATION,
       jobDescription: (value) =>
-        value ? null : INTERVIEW_PREPARATION.JOB_DESCRIPTION_VALIDATION,
+        value ? null : INTERVIEW_PREPARATION_TEXT.JOB_DESCRIPTION_VALIDATION,
     },
   });
 
@@ -131,13 +131,13 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
         style={{ background: "var(--bg)", borderColor: "var(--border)" }}
       >
         <Text fw={600} size="sm" c="var(--text-h)">
-          {INTERVIEW_PREPARATION.AI_INTERVIEW_PREPARATION}
+          {INTERVIEW_PREPARATION_TEXT.AI_INTERVIEW_PREPARATION_TEXT}
         </Text>
         <Tooltip
           label={
             isLeftCollapsed
-              ? INTERVIEW_PREPARATION.SHOW_PANEL
-              : INTERVIEW_PREPARATION.HIDE_PANEL
+              ? INTERVIEW_PREPARATION_TEXT.SHOW_PANEL
+              : INTERVIEW_PREPARATION_TEXT.HIDE_PANEL
           }
         >
           <ActionIcon
@@ -179,17 +179,17 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
           >
             <div>
               <Text fw={600} size="sm" c="var(--text-h)">
-                {INTERVIEW_PREPARATION.PANEL_TITLE}
+                {INTERVIEW_PREPARATION_TEXT.PANEL_TITLE}
               </Text>
               <Text size="xs" c="dimmed" mt={4}>
-                {INTERVIEW_PREPARATION.PANEL_SUBTITLE}
+                {INTERVIEW_PREPARATION_TEXT.PANEL_SUBTITLE}
               </Text>
             </div>
 
             {isCreateMode ? (
               <FileInput
-                label={INTERVIEW_PREPARATION.CV}
-                placeholder={INTERVIEW_PREPARATION.CV_PLACEHOLDER}
+                label={INTERVIEW_PREPARATION_TEXT.CV}
+                placeholder={INTERVIEW_PREPARATION_TEXT.CV_PLACEHOLDER}
                 accept=".pdf"
                 key={form.key("cv")}
                 rightSection={<Upload size={16} color="var(--text)" />}
@@ -201,7 +201,7 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
             ) : initialCv ? (
               <div>
                 <Text component="label" size="sm" fw={600} c="var(--text-h)">
-                  {INTERVIEW_PREPARATION.CV}
+                  {INTERVIEW_PREPARATION_TEXT.CV}
                 </Text>
                 <Anchor
                   href={getCvFileUrl(initialCv.id)}
@@ -230,8 +230,8 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
             ) : null}
 
             <Textarea
-              label={INTERVIEW_PREPARATION.POSITION}
-              placeholder={INTERVIEW_PREPARATION.POSITION_PLACEHOLDER}
+              label={INTERVIEW_PREPARATION_TEXT.POSITION}
+              placeholder={INTERVIEW_PREPARATION_TEXT.POSITION_PLACEHOLDER}
               minRows={3}
               autosize
               key={form.key("position")}
@@ -240,8 +240,8 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
               {...form.getInputProps("position")}
             />
             <Textarea
-              label={INTERVIEW_PREPARATION.JOB_DESCRIPTION}
-              placeholder={INTERVIEW_PREPARATION.JOB_DESCRIPTION_PLACEHOLDER}
+              label={INTERVIEW_PREPARATION_TEXT.JOB_DESCRIPTION}
+              placeholder={INTERVIEW_PREPARATION_TEXT.JOB_DESCRIPTION_PLACEHOLDER}
               minRows={6}
               autosize
               className="flex-1"
@@ -258,7 +258,7 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
                   loading={hasQuestionGenerationStarted}
                   leftSection={<Sparkles size={16} />}
                 >
-                  {INTERVIEW_PREPARATION.GENERATE}
+                  {INTERVIEW_PREPARATION_TEXT.GENERATE}
                 </Button>
               </div>
             )}
@@ -269,7 +269,7 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
           <div className="flex h-full flex-1 flex-col gap-4 overflow-y-auto p-6">
             <div>
               <Text fw={600} size="sm" c="var(--text-h)">
-                {INTERVIEW_PREPARATION.RESULT_TITLE}
+                {INTERVIEW_PREPARATION_TEXT.RESULT_TITLE}
               </Text>
             </div>
 
@@ -279,7 +279,7 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
                   <div className="flex flex-row align-center gap-2 w-full justify-center">
                     <Loader color="blue" size="sm" />
                     <Text size="sm" c="dimmed">
-                      {INTERVIEW_PREPARATION.GENERATING_QUESTIONS}
+                      {INTERVIEW_PREPARATION_TEXT.GENERATING_QUESTIONS}
                     </Text>
                   </div>
                 )}
@@ -307,10 +307,10 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
                   <MessageCircleQuestion size={22} />
                 </div>
                 <Text fw={500} size="sm" c="var(--text-h)">
-                  {INTERVIEW_PREPARATION.EMPTY_TITLE}
+                  {INTERVIEW_PREPARATION_TEXT.EMPTY_TITLE}
                 </Text>
                 <Text size="sm" c="dimmed" maw={340}>
-                  {INTERVIEW_PREPARATION.EMPTY_DESCRIPTION}
+                  {INTERVIEW_PREPARATION_TEXT.EMPTY_DESCRIPTION}
                 </Text>
               </div>
             )}
