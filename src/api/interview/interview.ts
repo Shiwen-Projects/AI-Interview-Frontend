@@ -61,7 +61,6 @@ export const createInterviewSession = async (
   }
 
   const data = await response.json();
-  console.log(data);
   return data.sessionId;
 };
 
@@ -81,10 +80,14 @@ export const getStreamingQuestions = async (
   );
 
   eventSource.addEventListener(InterviewQuestionStreamEvent.Done, () => {
+    // Close explicitly, otherwise EventSource treats the server-closed
+    // connection as a drop and auto-reconnects, starting a new stream.
+    eventSource.close();
     handler.onDone();
   });
 
   eventSource.addEventListener(InterviewQuestionStreamEvent.Error, (event) => {
+    eventSource.close();
     handler.onError(new Error(JSON.parse(event.data).message));
   });
 };
