@@ -1,9 +1,11 @@
+export type SessionCardData = {
+  id: string;
+  post: string;
+  jobDescription: string;
+};
+
 export type PaginatedSessions = {
-  items: {
-    id: string;
-    post: string;
-    jobDescription: string;
-  }[];
+  items: SessionCardData[];
   page: number;
   limit: number;
   total: number;

@@ -12,4 +12,8 @@ export const HOME_TEXT = {
   EMPTY_TITLE: "No sessions yet",
   EMPTY_DESCRIPTION:
     "Create your first session to start preparing for your next interview.",
-};
+
+  MANAGE: "Manage",
+  DONE: "Done",
+  DELETE: "Delete",
+  };

@@ -8,8 +8,8 @@ export type QuestionStreamHandler = {
 
 export type Answer = {
   answer: string;
-  score: number;
-  feedback: string;
+  score?: number;
+  feedback?: string;
 };
 
 export type AnswerEvaluation = Omit<Answer, "answer">;
@@ -17,7 +17,7 @@ export type AnswerEvaluation = Omit<Answer, "answer">;
 export type InterviewQuestion = {
   id: string;
   question: string;
-  answer: Answer;
+  answer?: Answer;
 };
 
 export type InterviewSession = {

@@ -10,7 +10,10 @@ import { notifications } from "@mantine/notifications";
 import { useRef, useState } from "react";
 import { Sparkles } from "lucide-react";
 import { INTERVIEW_PREPARATION_TEXT } from "./lang";
-import type { InterviewQuestion } from "../../api/interview/types";
+import type {
+  AnswerEvaluation,
+  InterviewQuestion,
+} from "../../api/interview/types";
 import { evaluateQuestionAnswer, updateQuestionAnswer } from "../../api";
 import { isAbortError } from "../../utils";
 
@@ -25,7 +28,11 @@ export function AnswerEvaluationModal(props: AnswerEvaluationModalProps) {
   const { opened, sessionId, interviewQuestion, onClose } = props;
 
   const { id, question, answer } = interviewQuestion;
-  const { answer: initialAnswer, score, feedback } = answer;
+  const {
+    answer: initialAnswer = "",
+    score = undefined,
+    feedback = undefined,
+  } = answer ?? {};
 
   const [isUpdatingAnswer, setIsUpdatingAnswer] = useState(false);
   const [isEvaluating, setIsEvaluating] = useState(false);
@@ -34,8 +41,12 @@ export function AnswerEvaluationModal(props: AnswerEvaluationModalProps) {
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const [answerText, setAnswerText] = useState(initialAnswer ?? "");
-  const [evaluation, setEvaluation] = useState({ score, feedback });
-  const hasEvaluation = evaluation.feedback.trim().length > 0;
+  const [evaluation, setEvaluation] = useState<AnswerEvaluation>({
+    score,
+    feedback,
+  });
+  const hasEvaluation =
+    evaluation.feedback && evaluation.feedback.trim().length > 0;
 
   const handleUpdateAnswer = async () => {
     abortControllerRef.current?.abort();
@@ -184,7 +195,7 @@ export function AnswerEvaluationModal(props: AnswerEvaluationModalProps) {
                   size={90}
                   thickness={10}
                   roundCaps
-                  sections={[{ value: evaluation.score, color: "blue" }]}
+                  sections={[{ value: evaluation.score ?? 0, color: "blue" }]}
                   label={
                     <Text size="sm" fw={600} c="var(--text-h)">
                       {evaluation.score}/100
