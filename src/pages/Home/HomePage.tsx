@@ -5,6 +5,7 @@ import {
   type LoaderFunctionArgs,
 } from "react-router-dom";
 import { Button, Pagination, Text } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { Check, Home, Inbox, Plus, Trash, FolderKanban } from "lucide-react";
 import { HOME_TEXT } from "./lang";
 import { SessionCard } from "./SessionCard";
@@ -15,8 +16,8 @@ import {
   HOME_PAGE_DEFAULT_PAGE,
   SessionCardMode,
 } from "./constants";
-import { notifications } from "@mantine/notifications";
-import { GlobalLoader } from "../../components";
+import { useGlobalUIContext } from "../../context";
+import { PageHeader } from "../../components";
 
 export async function homePageLoader({
   params,
@@ -44,7 +45,7 @@ export function HomePage() {
   const [totalPages, setTotalPages] = useState(initialTotalPages);
   const [isManagedMode, setIsManagedMode] = useState(false);
   const [selectedSessionIds, setSelectedSessionIds] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const { setLoading } = useGlobalUIContext();
 
   const navigate = useNavigate();
 
@@ -66,7 +67,7 @@ export function HomePage() {
   };
 
   const handlePageChange = async (nextPage: number): Promise<void> => {
-    setIsLoading(true);
+    setLoading(true);
     const controller = new AbortController();
     const signal = controller.signal;
     try {
@@ -79,7 +80,7 @@ export function HomePage() {
         message: (error as Error).message,
       });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -101,7 +102,7 @@ export function HomePage() {
       });
       return;
     }
-    setIsLoading(true);
+    setLoading(true);
     try {
       await bacthDeleteSessions(selectedSessionIds);
       const data = await fetchPage(page);
@@ -123,7 +124,7 @@ export function HomePage() {
         message: (error as Error).message,
       });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -132,28 +133,10 @@ export function HomePage() {
       className="flex min-h-0 flex-1 flex-col"
       style={{ background: "var(--bg-canvas)" }}
     >
-      {isLoading && <GlobalLoader visible={isLoading} />}
-      <header
-        className="flex h-14 shrink-0 items-center justify-between border-b px-5"
-        style={{ background: "var(--bg)", borderColor: "var(--border)" }}
-      >
-        <div className="flex items-center gap-3">
-          <Text fw={600} size="sm" c="var(--text-h)">
-            {HOME_TEXT.APP_TITLE}
-          </Text>
-          <span
-            className="h-4 w-px"
-            style={{ background: "var(--border-strong)" }}
-          />
-          <span
-            className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium"
-            style={{ background: "var(--accent-bg)", color: "var(--accent)" }}
-          >
-            <Home size={12} />
-            {HOME_TEXT.LOCATION}
-          </span>
-        </div>
-      </header>
+      <PageHeader
+        title={HOME_TEXT.APP_TITLE}
+        badge={{ icon: <Home size={12} />, label: HOME_TEXT.LOCATION }}
+      />
 
       <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-5 px-6 py-6">
