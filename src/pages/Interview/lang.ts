@@ -1,5 +1,7 @@
 export const INTERVIEW_PREPARATION_TEXT = {
   AI_INTERVIEW_PREPARATION_TEXT: "AI Interview Preparation",
+  LOCATION: "Session",
+
   PANEL_TITLE: "Candidate Details",
   PANEL_SUBTITLE: "Fill in the details below to generate tailored interview questions.",
 

@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { INTERVIEW_PREPARATION_TEXT } from "./lang";
 import { QuestionCard } from "./QuestionCard";
+import { PageHeader } from "../../components";
 import {
   createInterviewSession,
   getCvFileUrl,
@@ -126,30 +127,31 @@ export function InterviewPreparation(props: InterviewPreparationProps) {
       className="flex min-h-0 flex-1 flex-col"
       style={{ background: "var(--bg-canvas)" }}
     >
-      <header
-        className="flex h-14 shrink-0 items-center justify-between border-b px-5"
-        style={{ background: "var(--bg)", borderColor: "var(--border)" }}
-      >
-        <Text fw={600} size="sm" c="var(--text-h)">
-          {INTERVIEW_PREPARATION_TEXT.AI_INTERVIEW_PREPARATION_TEXT}
-        </Text>
-        <Tooltip
-          label={
-            isLeftCollapsed
-              ? INTERVIEW_PREPARATION_TEXT.SHOW_PANEL
-              : INTERVIEW_PREPARATION_TEXT.HIDE_PANEL
-          }
-        >
-          <ActionIcon
-            variant="default"
-            size="lg"
-            aria-label="Toggle input panel"
-            onClick={() => splitterRef.current?.toggleCollapse(0)}
+      <PageHeader
+        title={INTERVIEW_PREPARATION_TEXT.AI_INTERVIEW_PREPARATION_TEXT}
+        badge={{
+          icon: <MessageCircleQuestion size={12} />,
+          label: INTERVIEW_PREPARATION_TEXT.LOCATION,
+        }}
+        actions={
+          <Tooltip
+            label={
+              isLeftCollapsed
+                ? INTERVIEW_PREPARATION_TEXT.SHOW_PANEL
+                : INTERVIEW_PREPARATION_TEXT.HIDE_PANEL
+            }
           >
-            <PanelLeft size={18} />
-          </ActionIcon>
-        </Tooltip>
-      </header>
+            <ActionIcon
+              variant="default"
+              size="lg"
+              aria-label="Toggle input panel"
+              onClick={() => splitterRef.current?.toggleCollapse(0)}
+            >
+              <PanelLeft size={18} />
+            </ActionIcon>
+          </Tooltip>
+        }
+      />
 
       <Splitter
         className="min-h-0 flex-1"
